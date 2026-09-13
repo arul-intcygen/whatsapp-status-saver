@@ -1,136 +1,57 @@
-# WA Story Saver (Manual)
+# WhatsApp Status Saver
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Manifest-V3-blue?style=flat-square" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Privacy-100%25%20Local-success?style=flat-square" alt="Privacy First">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License MIT">
-  <img src="https://img.shields.io/badge/Tracking-Zero%20%2F%20No%20Ads-orange?style=flat-square" alt="No Ads">
-</p>
+Ekstensi Chrome untuk menyimpan status WhatsApp Web (foto/video) secara manual, satu per satu. Tombol simpan hanya muncul saat kamu sedang menonton status tertentu — tidak ada auto-scraping atau pengunduhan massal di background.
 
-Ekstensi browser yang ringan, aman, dan berfokus pada privasi untuk mengunduh status/story WhatsApp Web (video & foto) secara manual dengan satu klik.
+## Cara kerja
 
----
+WhatsApp Web merender status yang sedang dibuka ke elemen `<video>` atau `<img>` di halaman. Ekstensi ini mendeteksi elemen tersebut lewat `MutationObserver`, lalu menampilkan tombol "Save Story" di pojok layar. Saat diklik, ekstensi mengambil `src` media itu (baik berupa blob URL maupun endpoint stream milik WhatsApp) dan memicu unduhan lewat browser.
 
-## ✨ Keunggulan
+Tidak ada permintaan ke server eksternal, tidak ada penyimpanan riwayat, dan tidak ada proses yang berjalan tanpa interaksi pengguna.
 
-- ⚡ **Sangat Ringan & Bebas Lag**: Menggunakan *single-instance UI* dan *debounced observer* sehingga tidak membebani CPU, tidak membuat browser freeze, dan bebas dari *layout thrashing*.
-- 🎬 **Mendukung Video & Foto**: Otomatis mendeteksi media yang sedang aktif ditonton dan mengunduh format yang sesuai (`.mp4` atau `.jpg`).
-- 🔒 **100% Privasi Terjaga**: Tidak ada background scraping, tidak ada analitik pihak ketiga, tidak ada iklan, dan tidak ada data yang dikirim ke server luar. Semua proses berjalan murni di komputer lokal Anda.
-- 🎯 **Manual & Terkendali**: Tombol simpan hanya muncul saat Anda sedang menonton story. 1 klik = 1 story tersimpan.
+## Kompatibilitas
 
----
+Dikembangkan dan diuji di **Google Chrome**. Karena hanya menggunakan `content_scripts` tanpa background service worker, kemungkinan besar juga berjalan di browser berbasis Chromium lain (Edge, Brave, Opera) dengan cara instalasi yang sama — namun belum diuji secara resmi di browser tersebut.
 
-## 🚀 Panduan Instalasi (Multi-Browser)
+Firefox mendukung Manifest V3, tapi belum diuji untuk ekstensi ini dan mungkin memerlukan penyesuaian kecil pada `manifest.json` (misalnya menambahkan `browser_specific_settings`).
 
-Ekstensi ini berbasis **Manifest V3** dan dapat dipasang secara langsung pada semua browser modern berbasis Chromium serta Firefox.
+## Instalasi (Developer Mode)
 
-### 1. Unduh Repositori
-1. Klik tombol hijau **Code** di bagian atas halaman GitHub ini, lalu pilih **Download ZIP** (atau clone menggunakan `git clone`).
-2. Ekstrak file ZIP tersebut ke folder di komputer Anda.
+1. Klik **Code → Download ZIP** di halaman ini, lalu ekstrak.
+2. Buka `chrome://extensions` (atau `edge://extensions`, `brave://extensions` untuk browser Chromium lain).
+3. Aktifkan **Developer mode** di pojok kanan atas.
+4. Klik **Load unpacked**, lalu pilih folder hasil ekstrak.
 
----
+## Penggunaan
 
-### 2. Pasang di Browser Anda
+1. Buka [web.whatsapp.com](https://web.whatsapp.com) dan login seperti biasa.
+2. Buka status kontak yang ingin disimpan.
+3. Klik tombol **"Save Story"** yang muncul di pojok kanan bawah.
+4. File akan otomatis tersimpan ke folder Downloads dengan nama `wa-story-<timestamp>.mp4` (video) atau `.jpg` (foto).
 
-<details open>
-<summary><b>Google Chrome</b></summary>
+Tombol otomatis hilang saat status viewer ditutup, dan hanya muncul kembali saat kamu membuka status berikutnya.
 
-1. Buka Google Chrome dan ketik pada address bar:
-   ```text
-   chrome://extensions
-   ```
-2. Aktifkan tombol **Developer mode** di pojok kanan atas.
-3. Klik tombol **Load unpacked** di pojok kiri atas.
-4. Pilih folder hasil ekstrak (`wa-story-saver`).
-5. Ekstensi berhasil terpasang!
-</details>
+## Memperbarui setelah mengubah kode
 
-<details>
-<summary><b>Brave Browser</b></summary>
+1. Buka `chrome://extensions`.
+2. Klik ikon reload pada kartu ekstensi ini.
+3. Refresh tab WhatsApp Web (`F5`).
 
-1. Buka Brave Browser dan ketik pada address bar:
-   ```text
-   brave://extensions
-   ```
-2. Aktifkan tombol toggle **Developer mode** di pojok kanan atas.
-3. Klik tombol **Load unpacked**.
-4. Pilih folder hasil ekstrak (`wa-story-saver`).
-5. Selesai, ekstensi siap digunakan!
-</details>
+## Privasi
 
-<details>
-<summary><b>Microsoft Edge</b></summary>
+- Tidak menyimpan riwayat status, nama kontak, atau nomor telepon siapa pun.
+- Tidak ada permintaan jaringan ke luar selain yang memang dilakukan WhatsApp Web itu sendiri.
+- Permission yang diminta hanya `activeTab` dan `downloads`.
+- Media diambil dari elemen yang sudah kamu buka sendiri di sesi WhatsApp Web milikmu — bukan diakses dari luar sesi.
 
-1. Buka Microsoft Edge dan ketik pada address bar:
-   ```text
-   edge://extensions
-   ```
-2. Aktifkan opsi **Developer mode** pada menu sidebar sebelah kiri (bawah).
-3. Klik tombol **Load unpacked**.
-4. Pilih folder hasil ekstrak (`wa-story-saver`).
-5. Ekstensi berhasil terpasang!
-</details>
+## Catatan penggunaan
 
-<details>
-<summary><b>Opera / Opera GX</b></summary>
+Status WhatsApp bersifat sementara (ephemeral) dan dibagikan dengan asumsi tidak disimpan permanen oleh penonton. Ekstensi ini dirancang untuk penggunaan personal terhadap status yang memang sudah dibagikan kepadamu, bukan untuk mengumpulkan atau mendistribusikan konten milik orang lain tanpa izin.
 
-1. Buka Opera atau Opera GX dan ketik pada address bar:
-   ```text
-   opera://extensions
-   ```
-2. Aktifkan opsi **Developer mode** di pojok kanan atas.
-3. Klik tombol **Load unpacked**.
-4. Pilih folder hasil ekstrak (`wa-story-saver`).
-5. Ekstensi aktif dan siap digunakan!
-</details>
+## Keterbatasan yang diketahui
 
-<details>
-<summary><b>Mozilla Firefox</b></summary>
+- Endpoint media WhatsApp bersifat *session-scoped*. Jika WhatsApp mengubah arsitektur pengiriman medianya, selector di `content.js` mungkin perlu disesuaikan.
+- Jika `fetch()` gagal karena pembatasan CORS, opsi cadangan adalah klik kanan pada video/foto di halaman → **Save As**.
 
-> *Catatan: Firefox mewajibkan ekstensi temporary untuk dimuat via menu debugging.*
+## Lisensi
 
-1. Buka Mozilla Firefox dan ketik pada address bar:
-   ```text
-   about:debugging#/runtime/this-firefox
-   ```
-2. Klik tombol **Load Temporary Add-on...**
-3. Masuk ke folder ekstensi, lalu pilih file `manifest.json`.
-4. Ekstensi akan langsung aktif selama sesi browser berjalan.
-</details>
-
----
-
-## 📖 Cara Penggunaan
-
-1. Buka [web.whatsapp.com](https://web.whatsapp.com) dan login ke akun WhatsApp Anda.
-2. Buka status / story kontak mana pun yang ingin Anda simpan.
-3. Tombol hijau **"Save Story"** akan muncul secara otomatis di pojok kanan bawah layar.
-4. Klik tombol tersebut:
-   - Status akan berubah menjadi **"Mengunduh..."**.
-   - File video (`.mp4`) atau foto (`.jpg`) akan langsung tersimpan ke folder Download Anda dengan format nama `WA_Story_YYYYMMDD_HHMMSS`.
-   - Tombol akan menampilkan **"✓ Tersimpan!"** sebagai konfirmasi.
-5. Saat Anda menutup status viewer, tombol akan otomatis menghilang dari layar.
-
----
-
-## 🔄 Cara Memperbarui (Jika Ada Perubahan Kode)
-
-Jika Anda melakukan perubahan pada kode script:
-1. Buka halaman ekstensi browser Anda (misalnya `chrome://extensions`).
-2. Cari kartu **WA Story Saver**.
-3. Klik ikon **Reload / Perbarui** (panah melingkar).
-4. Buka tab WhatsApp Web Anda, lalu tekan **F5 / Refresh**.
-
----
-
-## 🛡️ Privasi & Keamanan
-
-- Ekstensi ini **TIDAK** menyimpan riwayat chat, nomor telepon, maupun kontak Anda.
-- Media diunduh langsung dari memori browser (*decrypted session blob*) yang sudah dibuka oleh Anda secara resmi di WhatsApp Web.
-- Tidak membutuhkan login akun tambahan atau token API pihak ketiga.
-
----
-
-## 📄 Lisensi
-
-Didistribusikan di bawah Lisensi **MIT**. Bebas digunakan, dimodifikasi, dan didistribusikan untuk keperluan pribadi maupun edukasi.
+MIT — bebas digunakan, dimodifikasi, dan didistribusikan ulang dengan tetap mencantumkan atribusi.
