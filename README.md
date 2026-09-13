@@ -1,57 +1,60 @@
-# WhatsApp Status Saver
+# WA Story Saver
 
-Ekstensi Chrome untuk menyimpan status WhatsApp Web (foto/video) secara manual, satu per satu. Tombol simpan hanya muncul saat kamu sedang menonton status tertentu — tidak ada auto-scraping atau pengunduhan massal di background.
+Ekstensi browser berbasis Manifest V3 untuk mengunduh status/story WhatsApp Web (video dan foto) secara manual langsung dari browser.
 
-## Cara kerja
+## Fitur Utama
 
-WhatsApp Web merender status yang sedang dibuka ke elemen `<video>` atau `<img>` di halaman. Ekstensi ini mendeteksi elemen tersebut lewat `MutationObserver`, lalu menampilkan tombol "Save Story" di pojok layar. Saat diklik, ekstensi mengambil `src` media itu (baik berupa blob URL maupun endpoint stream milik WhatsApp) dan memicu unduhan lewat browser.
+- **Unduh Manual**: Tombol simpan hanya muncul saat status aktif ditonton (1 klik = 1 media).
+- **Dukungan Video dan Foto**: Mendeteksi media secara dinamis dan mengunduh format yang sesuai (`.mp4` atau `.jpg`).
+- **Performa Ringan**: Menggunakan debounced observer dan manipulasi DOM minimal untuk mencegah lonjakan CPU dan browser freeze.
+- **Privasi Penuh**: Berjalan murni di sisi klien (lokal). Tidak ada pengumpulan data, analitik, ataupun koneksi ke server eksternal.
 
-Tidak ada permintaan ke server eksternal, tidak ada penyimpanan riwayat, dan tidak ada proses yang berjalan tanpa interaksi pengguna.
+## Panduan Instalasi
 
-## Kompatibilitas
+### 1. Unduh Kode Sumber
+1. Unduh repositori ini melalui tombol **Code** > **Download ZIP**, atau clone menggunakan git:
+   ```bash
+   git clone https://github.com/<username>/<repo-name>.git
+   ```
+2. Ekstrak file ZIP ke direktori lokal di komputer Anda.
 
-Dikembangkan dan diuji di **Google Chrome**. Karena hanya menggunakan `content_scripts` tanpa background service worker, kemungkinan besar juga berjalan di browser berbasis Chromium lain (Edge, Brave, Opera) dengan cara instalasi yang sama — namun belum diuji secara resmi di browser tersebut.
+### 2. Pemasangan di Browser
 
-Firefox mendukung Manifest V3, tapi belum diuji untuk ekstensi ini dan mungkin memerlukan penyesuaian kecil pada `manifest.json` (misalnya menambahkan `browser_specific_settings`).
+#### Google Chrome / Brave / Microsoft Edge / Opera (Chromium-based)
+1. Buka halaman manajemen ekstensi pada browser:
+   - Chrome: `chrome://extensions`
+   - Brave: `brave://extensions`
+   - Edge: `edge://extensions`
+   - Opera: `opera://extensions`
+2. Aktifkan **Developer mode** (Mode Pengembang) di bagian kanan atas atau sidebar.
+3. Klik **Load unpacked** (Muat yang belum dibongkar).
+4. Pilih folder `wa-story-saver` hasil ekstraksi.
 
-## Instalasi (Developer Mode)
+#### Mozilla Firefox
+1. Buka `about:debugging#/runtime/this-firefox` pada address bar.
+2. Klik tombol **Load Temporary Add-on...**
+3. Pilih file `manifest.json` yang ada di dalam folder proyek.
 
-1. Klik **Code → Download ZIP** di halaman ini, lalu ekstrak.
-2. Buka `chrome://extensions` (atau `edge://extensions`, `brave://extensions` untuk browser Chromium lain).
-3. Aktifkan **Developer mode** di pojok kanan atas.
-4. Klik **Load unpacked**, lalu pilih folder hasil ekstrak.
+## Cara Penggunaan
 
-## Penggunaan
+1. Buka [web.whatsapp.com](https://web.whatsapp.com) dan login ke akun Anda.
+2. Buka status/story kontak yang ingin Anda simpan.
+3. Tombol **Save Story** akan muncul di sudut kanan bawah layar.
+4. Klik tombol untuk mengunduh file media yang sedang aktif.
+5. File akan otomatis tersimpan ke folder Download dengan format nama `WA_Story_YYYYMMDD_HHMMSS`.
 
-1. Buka [web.whatsapp.com](https://web.whatsapp.com) dan login seperti biasa.
-2. Buka status kontak yang ingin disimpan.
-3. Klik tombol **"Save Story"** yang muncul di pojok kanan bawah.
-4. File akan otomatis tersimpan ke folder Downloads dengan nama `wa-story-<timestamp>.mp4` (video) atau `.jpg` (foto).
+## Pembaruan Ekstensi
 
-Tombol otomatis hilang saat status viewer ditutup, dan hanya muncul kembali saat kamu membuka status berikutnya.
+Jika Anda melakukan modifikasi pada kode sumber:
+1. Buka halaman ekstensi browser (misal: `chrome://extensions`).
+2. Cari kartu **WA Story Saver (Manual)**.
+3. Klik tombol **Reload** (panah melingkar).
+4. Muat ulang tab WhatsApp Web (tekan `F5`).
 
-## Memperbarui setelah mengubah kode
+## Privasi dan Keamanan
 
-1. Buka `chrome://extensions`.
-2. Klik ikon reload pada kartu ekstensi ini.
-3. Refresh tab WhatsApp Web (`F5`).
-
-## Privasi
-
-- Tidak menyimpan riwayat status, nama kontak, atau nomor telepon siapa pun.
-- Tidak ada permintaan jaringan ke luar selain yang memang dilakukan WhatsApp Web itu sendiri.
-- Permission yang diminta hanya `activeTab` dan `downloads`.
-- Media diambil dari elemen yang sudah kamu buka sendiri di sesi WhatsApp Web milikmu — bukan diakses dari luar sesi.
-
-## Catatan penggunaan
-
-Status WhatsApp bersifat sementara (ephemeral) dan dibagikan dengan asumsi tidak disimpan permanen oleh penonton. Ekstensi ini dirancang untuk penggunaan personal terhadap status yang memang sudah dibagikan kepadamu, bukan untuk mengumpulkan atau mendistribusikan konten milik orang lain tanpa izin.
-
-## Keterbatasan yang diketahui
-
-- Endpoint media WhatsApp bersifat *session-scoped*. Jika WhatsApp mengubah arsitektur pengiriman medianya, selector di `content.js` mungkin perlu disesuaikan.
-- Jika `fetch()` gagal karena pembatasan CORS, opsi cadangan adalah klik kanan pada video/foto di halaman → **Save As**.
+Ekstensi ini tidak menyimpan, merekam, ataupun mentransmisikan data obrolan, kontak, maupun media ke pihak mana pun. Pengunduhan media dilakukan langsung dari memory blob lokal yang telah didekripsi oleh WhatsApp Web di sesi peramban Anda.
 
 ## Lisensi
 
-MIT — bebas digunakan, dimodifikasi, dan didistribusikan ulang dengan tetap mencantumkan atribusi.
+Didistribusikan di bawah lisensi [MIT](LICENSE). Bebas digunakan, dimodifikasi, dan didistribusikan.
