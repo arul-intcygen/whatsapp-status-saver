@@ -5,7 +5,7 @@ Ekstensi browser berbasis Manifest V3 untuk mengunduh status/story WhatsApp Web 
 ## Fitur Utama
 
 - **Unduh Manual**: Tombol simpan hanya muncul saat status aktif ditonton (1 klik = 1 media).
-- **Dukungan Video dan Foto**: Mendeteksi media secara dinamis dan mengunduh format yang sesuai (`.mp4` atau `.jpg`).
+- **Dukungan Video dan Foto**: Mendeteksi media secara dinamis dan mengunduh format yang sesuai (`.mp4`, `.jpg`, `.png`, atau `.webp`).
 - **Performa Ringan**: Menggunakan debounced observer dan manipulasi DOM minimal untuk mencegah lonjakan CPU dan browser freeze.
 - **Privasi Penuh**: Berjalan murni di sisi klien (lokal). Tidak ada pengumpulan data, analitik, ataupun koneksi ke server eksternal.
 
@@ -28,12 +28,15 @@ Ekstensi browser berbasis Manifest V3 untuk mengunduh status/story WhatsApp Web 
    - Opera: `opera://extensions`
 2. Aktifkan **Developer mode** (Mode Pengembang) di bagian kanan atas atau sidebar.
 3. Klik **Load unpacked** (Muat yang belum dibongkar).
-4. Pilih folder `wa-story-saver` hasil ekstraksi.
+4. Pilih folder hasil ekstraksi/clone repositori ini.
 
-#### Mozilla Firefox
-1. Buka `about:debugging#/runtime/this-firefox` pada address bar.
-2. Klik tombol **Load Temporary Add-on...**
-3. Pilih file `manifest.json` yang ada di dalam folder proyek.
+### Persyaratan Versi Browser
+
+Ekstensi ini memerlukan **Chrome/Chromium versi 111 atau lebih baru** karena menggunakan
+eksekusi content script di `world: "MAIN"` untuk mengakses blob store WhatsApp Web.
+
+> **Catatan Firefox**: `world: "MAIN"` belum didukung Firefox untuk content script.
+> Ekstensi ini saat ini hanya diuji dan didukung pada browser berbasis Chromium.
 
 ## Cara Penggunaan
 
