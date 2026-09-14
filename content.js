@@ -4,9 +4,18 @@
  * Mengunduh WhatsApp Story (video / foto) yang sedang aktif ditonton secara manual.
  * Berjalan di execution context MAIN (sama seperti console DevTools) sehingga
  * memiliki akses penuh ke Blob store WhatsApp Web.
+ *
+ * Seluruh kode dibungkus IIFE agar tidak mencemari scope global halaman
+ * dan terhindar dari tabrakan identifier dengan script WhatsApp Web.
  */
+(() => {
+"use strict";
 
 const BUTTON_ID = "wa-story-saver-btn";
+
+// Selector container status viewer WhatsApp Web
+const STATUS_CONTAINER_SEL =
+  'div[data-animate-status-viewer="true"], [data-testid="status-viewer"], div[role="dialog"]';
 let saveButton = null;
 let debounceTimer = null;
 let currentActiveMedia = null;
@@ -27,9 +36,7 @@ const CHECK_ICON_SVG = `
  */
 function findActiveMedia() {
   // 1. Cek container status viewer overlay WhatsApp Web jika ada
-  const statusContainer = document.querySelector(
-    'div[data-animate-status-viewer="true"], [data-testid="status-viewer"], div[role="dialog"]'
-  );
+  const statusContainer = document.querySelector(STATUS_CONTAINER_SEL);
 
   if (statusContainer) {
     const vid = statusContainer.querySelector("video");
@@ -43,14 +50,16 @@ function findActiveMedia() {
     }
   }
 
-  // 2. Fallback: Deteksi video yang sedang ada di halaman (seperti skrip asli user di console)
+  // 2. Fallback: video besar yang berada DI DALAM container status viewer saja,
+  //    dan bukan stream live (duration = Infinity, mis. saat video call)
   const videos = document.querySelectorAll("video");
   for (let i = 0; i < videos.length; i++) {
     const vid = videos[i];
     const src = vid.currentSrc || vid.src;
-    if (src && vid.offsetWidth > 100 && vid.offsetHeight > 100) {
-      return { el: vid, type: "video" };
-    }
+    if (!src || vid.offsetWidth <= 100 || vid.offsetHeight <= 100) continue;
+    if (!vid.closest(STATUS_CONTAINER_SEL)) continue;
+    if (vid.readyState >= 1 && !Number.isFinite(vid.duration)) continue;
+    return { el: vid, type: "video" };
   }
 
   // 3. Fallback foto: HANYA cari gambar dengan blob: URL
@@ -195,7 +204,9 @@ async function saveMedia({ el, type }) {
 }
 
 /**
- * Observer dengan Debounce
+ * MutationObserver dengan debounce — satu-satunya mekanisme polling.
+ * Interval 1 detik yang lama dihapus untuk mengurangi beban DOM query
+ * berulang di halaman yang sangat aktif seperti WhatsApp Web.
  */
 const observer = new MutationObserver(() => {
   if (debounceTimer) return;
@@ -214,4 +225,4 @@ observer.observe(document.body, {
   subtree: true
 });
 
-setInterval(updateButtonVisibility, 1000);
+})();

@@ -3,7 +3,8 @@
   "name": "WA Story Saver (Manual)",
   "version": "1.0.1",
   "description": "Tambahkan tombol Save manual saat menonton story WhatsApp Web. Tidak melakukan auto-scrape.",
-  "permissions": ["activeTab", "downloads"],
+  "minimum_chrome_version": "111",
+  "permissions": [],
   "host_permissions": ["https://web.whatsapp.com/*"],
   "content_scripts": [
     {
